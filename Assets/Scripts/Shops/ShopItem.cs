@@ -37,5 +37,14 @@ namespace RPG.Shops
         {
             return item.GetDisplayName();
         }
+
+        public InventoryItem GetInventoryItem()
+        {
+            return item;
+        }
+        public int GetQuantityInTransaction()
+        {
+            return quantityInTransaction;
+        }
     }
 }
