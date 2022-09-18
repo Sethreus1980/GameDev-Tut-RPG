@@ -1,5 +1,6 @@
 using GameDevTV.Inventories;
 using RPG.Control;
+using RPG.Core;
 using RPG.Dialogue;
 using RPG.Movement;
 using System;
@@ -12,20 +13,33 @@ namespace RPG.Shops
 
     public class Shop : MonoBehaviour, IRaycastable
     {
-        [SerializeField] string shopName = "";        
+        [SerializeField] string shopName = "";
         
+        // Stock Config
+        // Item:
+        // InventoryItem
+        // Initial Stock
+        // buyingDiscount
+
+        [SerializeField] StockItemConfig[] stockConfig;
+
+        [System.Serializable]
+        class StockItemConfig
+        {
+            public InventoryItem item;
+            public int initialStock;
+            [Range(-50, 100)]
+            public float buyingDiscountPercentage;
+        }
+
         public event Action onChange;
 
         public IEnumerable<ShopItem> GetFilteredItems()
         {
-            yield return new ShopItem(InventoryItem.GetFromID("8363e21c-20fb-439b-89d5-abda75359373"),
-                10, 10.0f, 0);
-            yield return new ShopItem(InventoryItem.GetFromID("c7b79eb7-015c-40e7-8ee2-5b759a1c9385"),
-                10, 10.0f, 0);
-            yield return new ShopItem(InventoryItem.GetFromID("75f453bc-4649-40fd-baad-5ffc402bca54"),
-                10, 10.0f, 0);
-            yield return new ShopItem(InventoryItem.GetFromID("00c8c34a-f19a-4432-abd0-2c96d14c4d83"),
-                10, 10.0f, 0);
+            foreach (StockItemConfig config in stockConfig)
+            {
+                yield return new ShopItem(config.item, config.initialStock, 0, 0);
+            }
         }
         public void SelectFilter(ItemCategory category)
         {
@@ -37,7 +51,7 @@ namespace RPG.Shops
         }
         public void SelectMode(bool isBuying)
         {
-
+        
         }
         public bool IsBuyingMode()
         {
@@ -78,13 +92,27 @@ namespace RPG.Shops
             {
                 if (Vector3.Distance(callingController.transform.position, this.transform.position) > 3.0f)
                 {
-                    callingController.GetComponent<Mover>().StartMoveAction(this.transform.position, 1.0f);                
+                    callingController.GetComponent<Mover>().MoveTo(this.transform.position, 1.0f);
                     callingController.GetComponent<Shopper>().SetActiveShop(this);
                 }
                 else
+                {
                     callingController.GetComponent<Shopper>().SetActiveShop(this);
+                }
             }
             return true;
         }
+        //public void Update()
+        //{
+        //    Transform playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        //    if (playerTransform.GetComponent<Shopper>().GetActiveShop() == null)
+        //    {                
+        //        if (Vector3.Distance(playerTransform.position, this.transform.position) < 2.0f)
+        //        {
+        //            playerTransform.GetComponent<Mover>().Cancel();
+        //            playerTransform.GetComponent<Shopper>().SetActiveShop(this);                    
+        //        }
+        //    }
+        //}
     }
 }

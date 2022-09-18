@@ -28,7 +28,7 @@ namespace RPG.UI.Shops
             ShopChanged();
         }
 
-        // Update is called once per frame
+
         private void ShopChanged()
         {            
             currentShop = shopper.GetActiveShop();            
@@ -48,13 +48,14 @@ namespace RPG.UI.Shops
 
             foreach (ShopItem item in currentShop.GetFilteredItems())
             {
-                Instantiate<RowUI>(rowPrefab, listRoot);
+                RowUI row = Instantiate<RowUI>(rowPrefab, listRoot);
+                row.Setup(item);
             }
         }
 
         public void Close()
-        {
-            shopper.SetActiveShop(null);
+        {            
+            shopper.SetActiveShop(null);            
         }
     }
 }
